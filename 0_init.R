@@ -18,3 +18,7 @@ str(train_log); head(train_log)
 train_target <- as.data.frame(fread('Data/train/truth_train.csv'))
 str(train_target); head(train_target)
 
+### insights
+sum(table(object$course_id))
+sum(table(train_enrol$course_id))
+sum(table(train_log$course_id))
