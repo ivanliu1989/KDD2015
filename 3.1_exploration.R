@@ -58,13 +58,13 @@ featureEngineering <- function(x, x_log) {
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
     # Time - Standard Deviation
-    newFeat <- as.matrix(aggregate(x_log$POSIX,list(x_log$enrollment_id),FUN=sd))
+    newFeat <- as.matrix(aggregate(x_log$POSIX,list(x_log$enrollment_id),FUN=sd,na.rm = TRUE))
     colnames(newFeat) <- c('enrollment_id','timeSd')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
     # Time - Duration
     newFeat <- as.matrix(aggregate(x_log$POSIX,list(x_log$enrollment_id),
-                                   FUN=function(x) max(x)-min(x)))
+                                   FUN=function(x) max(x,na.rm = TRUE)-min(x,na.rm = TRUE)))
     colnames(newFeat) <- c('enrollment_id','timeDuration')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
@@ -74,17 +74,17 @@ featureEngineering <- function(x, x_log) {
     colnames(newfeat) <- c('enrollment_id','hourDist_20','hourDist_40','hourDist_60','hourDist_80','hourDist_100')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
-    newfeat <- as.matrix(aggregate(x_log$hour,list(x_log$enrollment_id),FUN=mean))
+    newfeat <- as.matrix(aggregate(x_log$hour,list(x_log$enrollment_id),FUN=mean,na.rm = TRUE))
     colnames(newfeat) <- c('enrollment_id','hourMean')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
     # Time - skewnessTime
-    newFeat <- as.matrix(aggregate(as.numeric(x_log$POSIX),list(x_log$enrollment_id),FUN=skewness))
+    newFeat <- as.matrix(aggregate(as.numeric(x_log$POSIX),list(x_log$enrollment_id),FUN=skewness,na.rm = TRUE))
     colnames(newFeat) <- c('enrollment_id','timeSkew')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
     # Time - kurtosisTime
-    newFeat <- as.matrix(aggregate(as.numeric(x_log$POSIX),list(x_log$enrollment_id),FUN=kurtosis))
+    newFeat <- as.matrix(aggregate(as.numeric(x_log$POSIX),list(x_log$enrollment_id),FUN=kurtosis,na.rm = TRUE))
     colnames(newFeat) <- c('enrollment_id','timeKurt')
     x <- merge(x, newFeat, sort=F, all=F, all.x=T)
     
