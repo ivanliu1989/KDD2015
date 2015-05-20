@@ -101,8 +101,11 @@ featureEngineering <- function(x, x_log) {
 }
 
 train_df <- featureEngineering(train, train_log)
-train_df <- merge(train_df, target, sort=F, all=F, all.y=T)
-write.csv(train_df,'trainData.csv', row.names=F)
+train_df_2 <- merge(train_df, target, sort=F, all=F, all.y=T)
+write.csv(train_df_2,'trainData.csv', row.names=F, quote=F)
 
 test_df <- featureEngineering(test, test_log)
-write.csv(test_df,'testData.csv', row.names=F)
+write.csv(test_df,'testData.csv', row.names=F, quote=F)
+
+train_df <- train_df_2
+save(train_df, test_df, file='raw_data.RData')
