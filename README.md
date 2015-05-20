@@ -26,26 +26,26 @@ This competition challenges participants to predict whether or not a user will d
 
 ### Features Generated:
 1. Raw: (categorical)
-	-username
-	-course_id
+	- username
+	- course_id
 2. Source: (numeric)
-	-ServerCount
-	-browserCount
-3.Event: (numeric)
-	-navigateCount
-	-accessCount
-	-problemCount
-	-page_closeCount
-	-videoCount
-	-discussionCount
-	-wikiCount
-4.Time: (numeric)
-	-sdTime
-	-enrolmentTime / duration
-	-hourMean / hourDistribution
-	-skewnessTime
-	-kurtosisTime
-	-freqDist / FreqMean
+	- ServerCount
+	- browserCount
+3. Event: (numeric)
+	- navigateCount
+	- accessCount
+	- problemCount
+	- page_closeCount
+	- videoCount
+	- discussionCount
+	- wikiCount
+4. Time: (numeric)
+	- sdTime
+	- enrolmentTime / duration
+	- hourMean / hourDistribution
+	- skewnessTime
+	- kurtosisTime
+	- freqDist / FreqMean
 
 ### Feature Engineers:
 1. Interaction
