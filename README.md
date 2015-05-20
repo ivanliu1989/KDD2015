@@ -1,14 +1,14 @@
 # KDD2015
 ![alt tag](http://dtcomp.g-i.asia/files/upload/cms/1/fe57d2863bd42bea9a8f31243fac8f0f.png)
 <br>
-### Backgrounds
+### Backgrounds:
 High dropout rate in Massive Open Online Courses (MOOCs) is worrisome. To cope with the dropping out issue, students who are inclined to quit should be identified and efforts should be made to prevent the churn. Early prediction of an online course dropout is a fundamental problem for MOOC platforms. This competition will be dealing with dropout prediction in the XuetangX.com platform.
 <br>
 
-### Descriptions
+### Descriptions:
 This competition challenges participants to predict whether or not a user will drop a course in next 10 days based on his or her prior actions. We say a user U drops a course C  in the next 10 days if U  leaves no records of course C  in the log during the next 10 days. For more details about log, please refer to Datasets Section.
 
-### Tips
+### Tips:
 1. Object
 	- Course_id, module_id, category, children
 	- Children #, Children category #, Children level
@@ -24,14 +24,14 @@ This competition challenges participants to predict whether or not a user will d
 4. Truth
 	- enrollment_id, target_value
 
-### Features Generated
-0. Raw: (categorical)
+### Features Generated:
+1. Raw: (categorical)
 	-username
 	-course_id
-1. Source: (numeric)
+2. Source: (numeric)
 	-ServerCount
 	-browserCount
-2.Event: (numeric)
+3.Event: (numeric)
 	-navigateCount
 	-accessCount
 	-problemCount
@@ -39,7 +39,7 @@ This competition challenges participants to predict whether or not a user will d
 	-videoCount
 	-discussionCount
 	-wikiCount
-3.Time: (numeric)
+4.Time: (numeric)
 	-sdTime
 	-enrolmentTime / duration
 	-hourMean / hourDistribution
@@ -47,7 +47,7 @@ This competition challenges participants to predict whether or not a user will d
 	-kurtosisTime
 	-freqDist / FreqMean
 
-### Feature Engineers
+### Feature Engineers:
 1. Interaction
 2. Centering & Scaling
 3. Log transformation
@@ -62,7 +62,7 @@ This competition challenges participants to predict whether or not a user will d
 5. rf
 6. fm
 
-### Steps
+### Steps:
 1. Feature generation
 2. Feature engineering
 3. Feature importance
