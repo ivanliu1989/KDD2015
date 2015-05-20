@@ -11,7 +11,7 @@ validation = validation[,-which(names(validation) %in% c("enrollment_id"))] #tra
 
 y = target_train#xgboost take features in [0,numOfClass)
 train <- as.matrix(train)
-dtrain = matrix(as.numeric(train[,3:12]),nrow(train[,3:12]),ncol(train[,3:12]))
+dtrain = matrix(as.numeric(train),nrow(train),ncol(train))
 validation <- as.matrix(validation)
 dvalidation = matrix(as.numeric(validation),nrow(validation),ncol(validation))
 # test
@@ -39,10 +39,13 @@ for (i in 1:30){
     
     ### Pred Validation ###
     pred = predict(bst,dvalidation,missing=NaN)#, ntreelimit=1
-    pred = matrix(pred,2,length(pred)/9)
-    pred = t(pred)
+    pred2 = matrix(pred,2,length(pred)/9)
+    pred2 = t(pred2)
     
     score <- auc(pred, target_val)
     
     print(score)
 }
+
+fit.rf <- randomForest(y=y, x=dtrain, ntree = 500)
+predict.rf <- predict(fit.rf, type = "prob")
