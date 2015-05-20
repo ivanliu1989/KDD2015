@@ -23,3 +23,48 @@ This competition challenges participants to predict whether or not a user will d
 	- same event (problem) (#/%)
 4. Truth
 	- enrollment_id, target_value
+
+### Features Generated
+0. Raw: (categorical)
+	-username
+	-course_id
+1. Source: (numeric)
+	-ServerCount
+	-browserCount
+2.Event: (numeric)
+	-navigateCount
+	-accessCount
+	-problemCount
+	-page_closeCount
+	-videoCount
+	-discussionCount
+	-wikiCount
+3.Time: (numeric)
+	-sdTime
+	-enrolmentTime / duration
+	-hourMean / hourDistribution
+	-skewnessTime
+	-kurtosisTime
+	-freqDist / FreqMean
+
+### Feature Engineers
+1. Interaction
+2. Centering & Scaling
+3. Log transformation
+4. One-hot encoding
+5. PCA
+
+### Models:
+1. xgboost
+2. vw
+3. svm
+4. nnets
+5. rf
+6. fm
+
+### Steps
+1. Feature generation
+2. Feature engineering
+3. Feature importance
+4. Training
+5. Blending
