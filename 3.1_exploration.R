@@ -1,47 +1,15 @@
 setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
 require(data.table);require(caret)
-
+source('KDD2015/2.3_feat_func.R')
+### Read Data ###
 train_log <- fread('data/train/log_train.csv', data.table=F)
 test_log <- fread('data/test/log_test.csv', data.table=F)
 train <- fread('data/train/enrollment_train.csv', data.table=F)
 test <- fread('data/test/enrollment_test.csv', data.table=F)
 target <- fread('data/train/truth_train.csv', data.table=F)
-colnames(target) <- c('enrollment_id','dropout')
+setnames(target, c("enrollment_id", "Dropout"))
 
-generateDistribution <- function(x) {
-    name='hourDist'
-    gap=0.2
-    x_wo_na <- x[!is.na(x)]
-    qdist <- seq(gap,1, by = gap)
-    if (length(x_wo_na)<(2*length(qdist))) {
-        dist <- quantile(x_wo_na, qdist,na.rm = T)
-    } else {
-        x_wo_peaks <- x_wo_na[abs(x_wo_na-mean(x_wo_na,na.rm = TRUE)) 
-                              < 5*sd(x_wo_na,na.rm = TRUE)]
-        dist <- quantile(x_wo_peaks, qdist,na.rm = T)
-    }
-    names(dist) = paste(name,names(dist),sep='_')
-    names(dist) = gsub("%", "_pct", names(dist))
-    return(dist)
-}
-generateDistributionDiff <- function(x) {
-    x <- as.numeric(diff(x))
-    name='freqDist'
-    gap=0.2
-    x_wo_na <- x[!is.na(x)]
-    qdist <- seq(gap,1, by = gap)
-    if (length(x_wo_na)<(2*length(qdist))) {
-        dist <- quantile(x_wo_na, qdist,na.rm = T)
-    } else {
-        x_wo_peaks <- x_wo_na[abs(x_wo_na-mean(x_wo_na,na.rm = TRUE)) 
-                              < 5*sd(x_wo_na,na.rm = TRUE)]
-        dist <- quantile(x_wo_peaks, qdist,na.rm = T)
-    }
-    names(dist) = paste(name,names(dist),sep='_')
-    names(dist) = gsub("%", "_pct", names(dist))
-    return(dist)
-}
 
 featureEngineering <- function(x, x_log) {
     x_log$POSIX <- strptime(x_log$time, "%Y-%m-%dT%H:%M:%S")

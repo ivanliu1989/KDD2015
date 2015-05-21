@@ -61,6 +61,7 @@ This competition challenges participants to predict whether or not a user will d
 4. nnets
 5. rf
 6. fm
+7. nb
 
 ### Steps:
 1. Feature generation
