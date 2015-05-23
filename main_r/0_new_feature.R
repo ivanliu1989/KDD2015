@@ -33,23 +33,23 @@ test_log$hour <- as.numeric(format(test_log$time, "%H"))
 train <- fread('data/train/enrollment_train.csv', data.table=F) #120543
 test <- fread('data/test/enrollment_test.csv', data.table=F) #80362
 
-featureEngineering <- function(train_log, train){
+featureEngineering <- function(df_log, df){
     # x1    total duration (course)
-    nFeat <- aggregate(train_log$time,list(train_log$enrollment_id),FUN=function(x) max(x)-min(x))
+    nFeat <- aggregate(df_log$time,list(df_log$enrollment_id),FUN=function(x) max(x)-min(x))
     colnames(nFeat) <- c('enrollment_id','DurationCourse')
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x3	Number of requests (Server)
     # x4	Number of sessions (Browser)
-    nFeat <- as.matrix(aggregate(train_log$source,list(train_log$enrollment_id),FUN=table))
+    nFeat <- as.matrix(aggregate(df_log$source,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'Num'))
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x5	Number of active days
-    nFeat <- as.matrix(aggregate(train_log$date,list(train_log$enrollment_id),
+    nFeat <- as.matrix(aggregate(df_log$date,list(df_log$enrollment_id),
                                  FUN=function(x) length(unique(x))))
     colnames(nFeat) <- c('enrollment_id','activeDays')
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x8	Number of video views
     # x10	Number of forum views
@@ -58,54 +58,54 @@ featureEngineering <- function(train_log, train){
     # x13	Number of page_close
     # x14	Number of access
     # x15	Number of navigate
-    nFeat <- as.matrix(aggregate(train_log$event,list(train_log$enrollment_id),FUN=table))
+    nFeat <- as.matrix(aggregate(df_log$event,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'Num'))
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x7    Number of page views per session
-    train$pagePerSession <- train$accessNum / train$activeDays
+    df$pagePerSession <- df$accessNum / df$activeDays
     # x9    Number of video views per session
-    train$videoPerSession <- train$videoNum / train$activeDays
+    df$videoPerSession <- df$videoNum / df$activeDays
     # x6    Number of assignments per session
-    train$assignmentPerSession <- train$problemNum / train$activeDays
+    df$assignmentPerSession <- df$problemNum / df$activeDays
     # x19    number collaborations
-    train$collaborationNum <- train$discussionNum + train$wikiNum
+    df$collaborationNum <- df$discussionNum + df$wikiNum
     
     # x17	Most active day
-    train_log$wkday <- as.factor(train_log$wkday)
-    levels(train_log$wkday) <- c('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
-    nFeat <- as.matrix(aggregate(train_log$wkday,list(train_log$enrollment_id),FUN=table))
+    df_log$wkday <- as.factor(df_log$wkday)
+    levels(df_log$wkday) <- c('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
+    nFeat <- as.matrix(aggregate(df_log$wkday,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'Num'))
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x18	observed event variance
-    nFeat <- as.matrix(aggregate(train_log$time,list(train_log$enrollment_id),FUN=sd))
+    nFeat <- as.matrix(aggregate(df_log$time,list(df_log$enrollment_id),FUN=sd))
     nFeat[is.na(nFeat[,2]),2] <- 0
     colnames(nFeat) <- c('enrollment_id', 'timeSD')
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x16   Most common request time
-    train_log$hour <- as.factor(train_log$hour)
-    nFeat <- as.matrix(aggregate(train_log$hour,list(train_log$enrollment_id),FUN=table))
+    df_log$hour <- as.factor(df_log$hour)
+    nFeat <- as.matrix(aggregate(df_log$hour,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'oclock'))
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x19   Time skewness
-    nFeat <- as.matrix(aggregate(as.numeric(train_log$time),list(train_log$enrollment_id),FUN=skewness))
+    nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=skewness))
     nFeat[is.na(nFeat[,2]),2] <- 0
     colnames(nFeat) <- c('enrollment_id', 'timeSkewness')
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x20   Time kurtosis
-    nFeat <- as.matrix(aggregate(as.numeric(train_log$time),list(train_log$enrollment_id),FUN=kurtosis))
+    nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=kurtosis))
     nFeat[is.na(nFeat[,2]),2] <- 0
     colnames(nFeat) <- c('enrollment_id', 'timeKurtosis')
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
     
     # x22   Object event num
-    nFeat <- as.matrix(aggregate(train_log$category,list(train_log$enrollment_id),FUN=table))
+    nFeat <- as.matrix(aggregate(df_log$category,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0('cat_',sub("x.","",colnames(nFeat)[-1]),'Num'))
-    train <- merge(train,nFeat,sort=F,all.x=T)
+    df <- merge(df,nFeat,sort=F,all.x=T)
 }
 
 ############
