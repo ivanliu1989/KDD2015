@@ -7,9 +7,9 @@ object <- fread('data/object.csv',data.table=F)
 object$children <- NULL
 
 train_log <- merge(train_log, object, by.x = c('course_id','object'),
-                      by.y = c('course_id','module_id'), all.x.x = T)
+                      by.y = c('course_id','module_id'), all.x = T)
 test_log <- merge(test_log, object, by.x = c('course_id','object'),
-                      by.y = c('course_id','module_id'), all.x.x = T)
+                      by.y = c('course_id','module_id'), all.x = T)
 
 ###################
 ### Time format ###
@@ -17,14 +17,15 @@ test_log <- merge(test_log, object, by.x = c('course_id','object'),
 train_log$time <- strptime(train_log$time, '%Y-%m-%dT%H:%M:%S')
 train_log$date <- as.Date(train_log$time, '%Y-%m-%d %H:%M:%S')
 train_log$start <- strptime(train_log$start, '%Y-%m-%dT%H:%M:%S')
+train_log$wkday <- as.POSIXlt(train_log$date)$wday
+train_log$weekend <- ifelse(train_log$wkday %in% c(0,6), 1, 0)
+train_log$hour <- as.numeric(format(train_log$time, "%H"))
+
 test_log$time <- strptime(test_log$time, '%Y-%m-%dT%H:%M:%S')
 test_log$date <- as.Date(test_log$time, '%Y-%m-%d %H:%M:%S')
 test_log$start <- strptime(test_log$start, '%Y-%m-%dT%H:%M:%S')
-train_log$wkday <- as.POSIXlt(train_log$date)$wday
 test_log$wkday <- as.POSIXlt(test_log$date)$wday
-train_log$weekend <- ifelse(train_log$wkday %in% c(0,6), 1, 0)
 test_log$weekend <- ifelse(test_log$wkday %in% c(0,6), 1, 0)
-train_log$hour <- as.numeric(format(train_log$time, "%H"))
 test_log$hour <- as.numeric(format(test_log$time, "%H"))
 
 ##########################
