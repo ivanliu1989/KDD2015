@@ -1,7 +1,7 @@
 setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
 require(data.table);require(caret);require(doMC);require(ROCR)
-registerDoMC(core=4)
+registerDoMC(core=3)
 load('data/new/cv_data_log_extend.RData')
 # load('data/new/raw_data_log_extend.RData')
 
@@ -25,11 +25,10 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
                            classProbs = TRUE, summaryFunction = twoClassSummary)#,
 #adaptive = list(min = 8,alpha = 0.05,
 #method = "BT",complete = TRUE))
-gbmGrid <-  expand.grid(interaction.depth = 6,
-                        n.trees = 300,
-                        shrinkage = 0.01)
+gbmGrid <-  expand.grid(nrounds=500,max_depth=8,eta=0.1)
 set.seed(8)
-gbmFit <- train(dropout ~ ., data = train_df, method = "gbm",
+model <- 'xgbTree'
+gbmFit <- train(dropout ~ ., data = train_df, method = model,
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,
 
@@ -47,12 +46,13 @@ pred <- predict(gbmFit, newdata = val_df, type = "prob")
 # target_val = val_df$dropout
 score <- auc(pred, target_val);print(score)
 
-pred1 <- pred
-pred2 <- pred
-pred_a <- (pred1 + pred2)/2
+# submission <- cbind(test$enrollment_id, pred[,2])
+write.csv(pred, file=paste0('results/valPred_',model,'_',score,'.csv'),row.names=F, quote=F)
+
+pred_a <- mean()
 
 ####################
 ### Variable imp ###
 ####################
 gbmImp <- varImp(gbmFit, scale = FALSE)
-plot(gbmImp, top = 20)
+plot(gbmImp, top = 80)
