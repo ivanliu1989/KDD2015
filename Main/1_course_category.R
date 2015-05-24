@@ -1,11 +1,11 @@
 setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
 require(data.table)
-load('data/new/raw_data_log.RData')
+load('data/new/raw_data.RData')
 object <- fread('data/object.csv',data.table=F)
 
 nFeat <- as.matrix(aggregate(object$category,list(object$course_id),FUN=table))
-colnames(nFeat) <- c('course_id',paste0('course_',sub("x.","",colnames(nFeat)[-1])))
+colnames(nFeat) <- c('course_id',paste0('cs_',sub("x.","",colnames(nFeat)[-1])))
 # for(i in 1: ncol(nFeat[,2])){
 #     print(paste0(colnames(nFeat[,2])[i],': ',length(table(nFeat[,2][,i]))))
 # }

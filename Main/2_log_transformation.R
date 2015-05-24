@@ -7,11 +7,11 @@ load(file='data/new/raw_data_extend.RData')
 train$DurationCourse <- as.numeric(train$DurationCourse); test$DurationCourse <- as.numeric(test$DurationCourse)
 head(train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <- 
-    log(1+train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
+    log1p(train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 
 head(test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis"))])
 test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <-
-    log(1+test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
+    log1p(test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 
 head(train);head(test)
 

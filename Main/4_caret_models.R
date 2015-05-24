@@ -25,14 +25,17 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
                            classProbs = TRUE, summaryFunction = twoClassSummary)#,
 #adaptive = list(min = 8,alpha = 0.05,
 #method = "BT",complete = TRUE))
-gbmGrid <-  expand.grid(nrounds=500,max_depth=8,eta=0.1)
+gbmGrid <-  expand.grid(interaction.depth=8,n.trees=160,shrinkage=0.1,n.minobsinnode=1)
 set.seed(8)
-model <- 'xgbTree'
+model <- 'gbm'
 gbmFit <- train(dropout ~ ., data = train_df, method = model,
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,
 
 pred <- predict(gbmFit, newdata = val_df, type = "prob")
+# pred <- predict(gbmFit, newdata = val_df)
+# levels(pred) <- c(0,1); pred <- as.matrix(pred)
+# pred <- as.numeric(pred);pred <- cbind(pred,pred)
 
 ##################
 ### Validation ###
@@ -56,3 +59,5 @@ pred_a <- mean()
 ####################
 gbmImp <- varImp(gbmFit, scale = FALSE)
 plot(gbmImp, top = 80)
+
+

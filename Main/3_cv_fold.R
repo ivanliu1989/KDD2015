@@ -2,7 +2,7 @@ setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
 require(data.table);require(caret)
 
-load('data/new/raw_data_extend.RData')
+load('data/new/raw_data_log_extend.RData')
 
 ### CV & Train & Test ###
 set.seed(9)
