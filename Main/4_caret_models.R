@@ -31,7 +31,7 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
 #method = "BT",complete = TRUE))
 gbmGrid <-  expand.grid(interaction.depth=8,n.trees=60,shrinkage=0.1,n.minobsinnode=1)#
 model <- 'gbm'
-gbmFit <- train(dropout ~ ., data = train_df, method = model,
+gbmFit <- train(dropout ~ ., data = train_df[,c('dropout',varImp)], method = model, #
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,
 
@@ -56,8 +56,10 @@ pred_a <- mean()
 ####################
 gbmImp <- varImp(gbmFit, scale = T)
 gbmImp$importance
-RocImp <- filterVarImp(x = train_df[, -55], y = train_df$dropout)
-RocImp
 plot(gbmImp, top = 80)
+
+RocImp <- filterVarImp(x = train_df[, -55], y = train_df$dropout)
+RocImp[order(RocImp[,1],decreasing = T),]
+varImp <- row.names(RocImp[which(RocImp$Yes>0.5),])
 
 
