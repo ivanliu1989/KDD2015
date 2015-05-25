@@ -3,6 +3,7 @@ rm(list = ls()); gc()
 require(methods);require(data.table);library(h2o)
 load('data/new/cv_data_log_extend.RData')
 options(scipen=3)
+source('KDD2015/Main/0_function.R')
 
 ################
 ### training ###

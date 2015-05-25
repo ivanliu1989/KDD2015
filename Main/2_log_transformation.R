@@ -3,15 +3,20 @@ rm(list = ls()); gc()
 require(data.table)
 # load(file='data/new/raw_data.RData')
 load(file='data/new/raw_data_extend.RData')
+source('KDD2015/Main/0_function.R')
 ### log transfer ###
 train$DurationCourse <- as.numeric(train$DurationCourse); test$DurationCourse <- as.numeric(test$DurationCourse)
 head(train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <- 
     log1p(train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
+# train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <- 
+#     Anscombe_Transform(train[,-which(names(train) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 
 head(test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis"))])
 test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <-
     log1p(test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
+# test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))] <-
+#     Anscombe_Transform(test[,-which(names(test) %in% c("enrollment_id","username","course_id","timeSkewness","timeKurtosis","dropout"))])
 
 head(train);head(test)
 

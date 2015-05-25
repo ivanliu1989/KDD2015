@@ -1,8 +1,11 @@
 setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
-require(data.table);require(caret);require(doMC);require(ROCR)
+require(data.table);require(caret);require(doMC)
 registerDoMC(core=3)
 load('data/new/cv_data_log_extend.RData')
+# load('data/new/cv_data_anscombe_extend.RData')
+# load('data/new/cv_data_extend.RData')
+source('KDD2015/Main/0_function.R')
 # load('data/new/raw_data_log_extend.RData')
 
 ################
@@ -11,7 +14,8 @@ load('data/new/cv_data_log_extend.RData')
 train_df <- train[,-which(names(train) %in% c('course_id', 'enrollment_id', 'username'))]
 val_df <- val[,-which(names(val) %in% c('course_id', 'enrollment_id', 'username'))]
 test_df <- test[,-which(names(test) %in% c('course_id', 'enrollment_id', 'username'))]
-
+set.seed(8)
+train_df <- shuffle(train_df)
 ######################
 ### convert target ###
 ######################
@@ -25,9 +29,8 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
                            classProbs = TRUE, summaryFunction = twoClassSummary)#,
 #adaptive = list(min = 8,alpha = 0.05,
 #method = "BT",complete = TRUE))
-gbmGrid <-  expand.grid(interaction.depth=8,n.trees=160,shrinkage=0.1,n.minobsinnode=1)
-set.seed(8)
-model <- 'gbm'
+gbmGrid <-  expand.grid(C=4)#interaction.depth=8,n.trees=60,shrinkage=0.1,n.minobsinnode=1
+model <- 'svmLinear'
 gbmFit <- train(dropout ~ ., data = train_df, method = model,
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,
@@ -40,13 +43,7 @@ pred <- predict(gbmFit, newdata = val_df, type = "prob")
 ##################
 ### Validation ###
 ##################
-# auc <- function(predict, target) {
-#     rocr <- prediction(predict[, 2], target)
-#     roc <- performance(rocr, "tpr", "fpr")
-#     plot(roc, colorize = TRUE)
-#     performance(rocr, "auc")@y.values
-# }
-# target_val = val_df$dropout
+target_val = val_df$dropout
 score <- auc(pred, target_val);print(score)
 
 # submission <- cbind(test$enrollment_id, pred[,2])
@@ -57,7 +54,8 @@ pred_a <- mean()
 ####################
 ### Variable imp ###
 ####################
-gbmImp <- varImp(gbmFit, scale = FALSE)
+gbmImp <- varImp(gbmFit, scale = T)
+gbmImp$importance
 plot(gbmImp, top = 80)
 
 
