@@ -29,9 +29,10 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
                            classProbs = TRUE, summaryFunction = twoClassSummary)#,
 #adaptive = list(min = 8,alpha = 0.05,
 #method = "BT",complete = TRUE))
-gbmGrid <-  expand.grid(interaction.depth=8,n.trees=60,shrinkage=0.1,n.minobsinnode=1)#
+gbmGrid <-  expand.grid(interaction.depth=8,n.trees=500,shrinkage=0.01,n.minobsinnode=1)
+# 8 | 500 | 0.01 | 4 | 0.8431495
 model <- 'gbm'
-gbmFit <- train(dropout ~ ., data = train_df[,c('dropout',varImp)], method = model, #
+gbmFit <- train(dropout ~ ., data = train_df[,c(3,55)], method = model, #[,c('dropout',varImp)]
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,
 
@@ -45,10 +46,8 @@ pred <- predict(gbmFit, newdata = val_df, type = "prob")
 ##################
 target_val = val_df$dropout
 score <- auc(pred, target_val);print(score)
-
 # submission <- cbind(test$enrollment_id, pred[,2])
 write.csv(pred, file=paste0('results/valPred_',model,'_',score,'.csv'),row.names=F, quote=F)
-
 pred_a <- mean()
 
 ####################
