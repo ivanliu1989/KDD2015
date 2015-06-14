@@ -1,4 +1,4 @@
-setwd('Google Drive/KDD2015')
+setwd('Google Drive/Competition/KDD2015')
 rm(list = ls()); gc()
 require(data.table);library(dplyr);library(reshape2);library(MASS);library(e1071);library(doMC)
 registerDoMC(cores=4)
@@ -73,40 +73,53 @@ featureEngineering <- function(df_log, df){
     # x19    number collaborations
     df$collaborationNum <- df$discussionNum + df$wikiNum
     
-    # x17	Most active day
-    df_log$wkday <- as.factor(df_log$wkday)
-    levels(df_log$wkday) <- c('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
-    nFeat <- as.matrix(aggregate(df_log$wkday,list(df_log$enrollment_id),FUN=table))
-    colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'Num'))
-    df <- merge(df,nFeat,sort=F,all.x=T)
-    
     # x18	observed event variance
     nFeat <- as.matrix(aggregate(df_log$time,list(df_log$enrollment_id),FUN=sd))
     nFeat[is.na(nFeat[,2]),2] <- 0
     colnames(nFeat) <- c('enrollment_id', 'timeSD')
     df <- merge(df,nFeat,sort=F,all.x=T)
     
+    # x22   Object event num
+    nFeat <- as.matrix(aggregate(df_log$category,list(df_log$enrollment_id),FUN=table))
+    colnames(nFeat) <- c('enrollment_id',paste0('cat_',sub("x.","",colnames(nFeat)[-1]),'Num'))
+    df <- merge(df,nFeat,sort=F,all.x=T)
+    
+#     # x19   Time skewness
+#     nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=skewness))
+#     nFeat[is.na(nFeat[,2]),2] <- 0
+#     colnames(nFeat) <- c('enrollment_id', 'timeSkewness')
+#     df <- merge(df,nFeat,sort=F,all.x=T)
+#     
+#     # x20   Time kurtosis
+#     nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=kurtosis))
+#     nFeat[is.na(nFeat[,2]),2] <- 0
+#     colnames(nFeat) <- c('enrollment_id', 'timeKurtosis')
+#     df <- merge(df,nFeat,sort=F,all.x=T)
+    
+    # x17	Most active day
+    df_log$wkday <- as.factor(df_log$wkday)
+    levels(df_log$wkday) <- c('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
+    nFeat <- as.matrix(aggregate(df_log$wkday,list(df_log$enrollment_id),FUN=table))
+    colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'Num'))
+    df <- merge(df,nFeat,sort=F,all.x=T)
+    df$Weekday <- rowSums(df[,c('MonNum','TueNum','WedNum','ThuNum','FriNum')])
+    df$Weekend <- rowSums(df[,c('SunNum','SatNum')])
+    df[,c('SunNum')] <- NULL ; df[,c('MonNum')] <- NULL; df[,c('TueNum')] <- NULL; df[,c('WedNum')] <- NULL
+    df[,c('ThuNum')] <- NULL; df[,c('FriNum')] <- NULL; df[,c('SatNum')] <- NULL
+    df$Weekday <- df$Weekday/5;df$Weekend <- df$Weekend/2
+    
+    # wkday/wkend
+    df$WkendRatio <- df$Weekend / (df$Weekend+df$Weekday)
+    
+    # Mean working hour
+    nFeat <- as.matrix(aggregate(df_log$hour,list(df_log$enrollment_id),FUN=mean))
+    colnames(nFeat) <- c('enrollment_id','meanWorkHour')
+    df <- merge(df,nFeat,sort=F,all.x=T)
+    
     # x16   Most common request time
     df_log$hour <- as.factor(df_log$hour)
     nFeat <- as.matrix(aggregate(df_log$hour,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'oclock'))
-    df <- merge(df,nFeat,sort=F,all.x=T)
-    
-    # x19   Time skewness
-    nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=skewness))
-    nFeat[is.na(nFeat[,2]),2] <- 0
-    colnames(nFeat) <- c('enrollment_id', 'timeSkewness')
-    df <- merge(df,nFeat,sort=F,all.x=T)
-    
-    # x20   Time kurtosis
-    nFeat <- as.matrix(aggregate(as.numeric(df_log$time),list(df_log$enrollment_id),FUN=kurtosis))
-    nFeat[is.na(nFeat[,2]),2] <- 0
-    colnames(nFeat) <- c('enrollment_id', 'timeKurtosis')
-    df <- merge(df,nFeat,sort=F,all.x=T)
-    
-    # x22   Object event num
-    nFeat <- as.matrix(aggregate(df_log$category,list(df_log$enrollment_id),FUN=table))
-    colnames(nFeat) <- c('enrollment_id',paste0('cat_',sub("x.","",colnames(nFeat)[-1]),'Num'))
     df <- merge(df,nFeat,sort=F,all.x=T)
 }
 

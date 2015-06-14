@@ -2,7 +2,7 @@ require(ROCR)
 auc <- function(predict, target) {
     rocr <- prediction(predict[, 2], target)
     roc <- performance(rocr, "tpr", "fpr")
-    plot(roc, colorize = TRUE)
+    # plot(roc, colorize = TRUE)
     performance(rocr, "auc")@y.values
 }
 

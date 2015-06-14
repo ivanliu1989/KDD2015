@@ -13,10 +13,13 @@ val_df <- val[,-which(names(val) %in% c('course_id', 'enrollment_id', 'username'
 test_df <- test[,-which(names(test) %in% c('course_id', 'enrollment_id', 'username'))]
 train_df <- train_df[,c(1:54,56:70,55)]
 val_df <- val_df[,c(1:54,56:70,55)]
-train_df[,70] <- as.factor(train_df[,70])
-levels(train_df[,70]) <- c('No', 'Yes')
-val_df[,70] <- as.factor(val_df[,70])
-levels(val_df[,70]) <- c('No', 'Yes')
+train_df <- train_df[,-which(names(train_df) %in% var_rm)]
+val_df <- val_df[,-which(names(val_df) %in% var_rm)]
+test_df <- test_df[,-which(names(test_df) %in% var_rm)]
+train_df[,14] <- as.factor(train_df[,14])
+levels(train_df[,14]) <- c('No', 'Yes')
+val_df[,14] <- as.factor(val_df[,14])
+levels(val_df[,14]) <- c('No', 'Yes')
 
 # h2o.shutdown(localH2O)
 localH2O <- h2o.init(nthread=3,Xmx="12g")
@@ -120,19 +123,21 @@ for(i in 1:20){
                      y=response,
                      training_frame = train.hex,
                      distribution="bernoulli",
-                     ntrees=900,
-                     max_depth=6,
+                     ntrees=600,
+                     max_depth=7,
                      # min_rows=10,
                      learn_rate=0.01,
-                     nbins=1024,
+                     nbins=186,
                      #nbins_cats=1024,
                      balance_classes=F,
                      seed=8)
-    model@model$scoring_history
-    model@model$variable_importances
+    # model@model$scoring_history
+    # model@model$variable_importances
+    # var_imp <- as.data.frame(model@model$variable_importances)
+    # var_rm <- var_imp[which(var_imp$percentage <= 0.005), 1]
     #max_after_balance_size
     
-    pred = as.data.frame(predict(model,test.hex))
+    pred = as.data.frame(predict(model,val.hex))
     score <- auc(pred[,2:3], target_val);print(score)
     write.csv(pred, file=paste0('results/valPred_h2o_deeplearning_',score,'.csv'),row.names=F, quote=F)
     
