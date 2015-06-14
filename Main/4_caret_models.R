@@ -1,4 +1,4 @@
-setwd('Google Drive/KDD2015')
+setwd('Google Drive/Competition/KDD2015')
 rm(list = ls()); gc()
 require(data.table);require(caret);require(doMC)
 registerDoMC(core=3)
@@ -29,9 +29,9 @@ fitControl <- trainControl(method = "none", #number = 10, repeats = 5,
                            classProbs = TRUE, summaryFunction = twoClassSummary)#,
 #adaptive = list(min = 8,alpha = 0.05,
 #method = "BT",complete = TRUE))
-gbmGrid <-  expand.grid(interaction.depth=8,n.trees=500,shrinkage=0.01,n.minobsinnode=1)
+gbmGrid <-  expand.grid(nrounds=200, max_depth=6, eta=0.05)
 # 8 | 500 | 0.01 | 4 | 0.8431495
-model <- 'gbm'
+model <- 'xgbTree'
 gbmFit <- train(dropout ~ ., data = train_df[,c(3,55)], method = model, #[,c('dropout',varImp)]
                 trControl = fitControl, preProc = c("center", "scale"),
                 metric = "ROC",verbose =T,tuneGrid = gbmGrid )#tuneLength = 6,

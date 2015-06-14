@@ -1,4 +1,4 @@
-setwd('Google Drive/KDD2015')
+setwd('Google Drive/Competition/KDD2015')
 rm(list = ls()); gc()
 require(methods);require(data.table);library(h2o)
 load('data/new/cv_data_log_extend.RData')
@@ -75,11 +75,11 @@ for(i in 1:20){
                      y=response,
                      data=train.hex,
                      distribution="bernoulli",
-                     n.trees=500,
+                     n.trees=1000,
                      interaction.depth=8,
                      #n.minobsinnode=1,
-                     shrinkage=0.1,
-                     n.bins=9,
+                     shrinkage=0.01,
+                     n.bins=18,
                      balance.classes=T)
     
     pred = as.data.frame(h2o.predict(model,val.hex))
