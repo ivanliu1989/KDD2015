@@ -121,6 +121,19 @@ featureEngineering <- function(df_log, df){
     nFeat <- as.matrix(aggregate(df_log$hour,list(df_log$enrollment_id),FUN=table))
     colnames(nFeat) <- c('enrollment_id',paste0(sub("x.","",colnames(nFeat)[-1]),'oclock'))
     df <- merge(df,nFeat,sort=F,all.x=T)
+    df$Morning <- rowSums(df[,c('3oclock', '4oclock', '5oclock', '6oclock', '7oclock','8oclock')])
+    df$Noon <- rowSums(df[,c('9oclock', '10oclock', '11oclock', '12oclock', '13oclock', '14oclock', '15oclock','16oclock','17oclock')])
+    df$Night <- rowSums(df[,c('18oclock','19oclock','20oclock','21oclock','22oclock','23oclock','0oclock', '1oclock', '2oclock')])
+    df[,c('0oclock')] <- NULL;df[,c('1oclock')] <- NULL;df[,c('2oclock')] <- NULL;df[,c('3oclock')] <- NULL
+    df[,c('4oclock')] <- NULL;df[,c('5oclock')] <- NULL;df[,c('6oclock')] <- NULL;df[,c('7oclock')] <- NULL
+    df[,c('8oclock')] <- NULL;df[,c('9oclock')] <- NULL;df[,c('10oclock')] <- NULL;df[,c('11oclock')] <- NULL
+    df[,c('12oclock')] <- NULL;df[,c('13oclock')] <- NULL;df[,c('14oclock')] <- NULL;df[,c('15oclock')] <- NULL
+    df[,c('16oclock')] <- NULL;df[,c('17oclock')] <- NULL;df[,c('18oclock')] <- NULL;df[,c('19oclock')] <- NULL
+    df[,c('20oclock')] <- NULL;df[,c('21oclock')] <- NULL;df[,c('22oclock')] <- NULL;df[,c('23oclock')] <- NULL
+    df$MorningRatio <- df$Morning/(df$Morning+df$Noon+df$Night)
+    df$NoonRatio <- df$Noon/(df$Morning+df$Noon+df$Night)
+    df$NightRatio <- df$Night/(df$Morning+df$Noon+df$Night)
+    # df$Morning <- NULL; df$Noon <- NULL; df$Night <- NULL
 }
 
 ############
@@ -149,6 +162,6 @@ train <- train[-which(is.na(train$dropout)),]
 ##################
 ### Save files ###
 ##################
-write.csv(train,file='data/new/train.csv',quote=F, row.names=F)
-write.csv(test,file='data/new/test.csv',quote=F, row.names=F)
-save(train, test, file='data/new/raw_data.RData')
+write.csv(train,file='data_new/train.csv',quote=F, row.names=F)
+write.csv(test,file='data_new/test.csv',quote=F, row.names=F)
+save(train, test, file='data_new/raw_data.RData')
