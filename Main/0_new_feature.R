@@ -134,6 +134,7 @@ featureEngineering <- function(df_log, df){
     df$NoonRatio <- df$Noon/(df$Morning+df$Noon+df$Night)
     df$NightRatio <- df$Night/(df$Morning+df$Noon+df$Night)
     # df$Morning <- NULL; df$Noon <- NULL; df$Night <- NULL
+    return(df)
 }
 
 ############

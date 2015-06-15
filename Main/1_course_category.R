@@ -1,7 +1,7 @@
 setwd('Google Drive/KDD2015')
 rm(list = ls()); gc()
 require(data.table)
-load('data/new/raw_data.RData')
+load('data_new/raw_data.RData')
 object <- fread('data/object.csv',data.table=F)
 
 nFeat <- as.matrix(aggregate(object$category,list(object$course_id),FUN=table))
@@ -17,10 +17,10 @@ test <- merge(test,nFeat,sort=F,all.x=T)
 tail(train)
 tail(test)
 
-for(i in 59:71){
+for(i in 36:48){
     train[,i] <- as.numeric(train[,i])
 }
-for(i in 58:70){
+for(i in 35:47){
     test[,i] <- as.numeric(test[,i])
 }
 
@@ -38,6 +38,6 @@ train <- merge(train,nFeat,sort=F,all.x=T)
 test <- merge(test,nFeat,sort=F,all.x=T)
 
 
-write.csv(train,file='data/new/train_extend.csv',quote=F, row.names=F)
-write.csv(test,file='data/new/test_extend.csv',quote=F, row.names=F)
-save(train, test, file='data/new/raw_data_extend.RData')
+write.csv(train,file='data_new/train_extend.csv',quote=F, row.names=F)
+write.csv(test,file='data_new/test_extend.csv',quote=F, row.names=F)
+save(train, test, file='data_new/raw_data_extend.RData')
