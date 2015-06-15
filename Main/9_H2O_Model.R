@@ -1,7 +1,7 @@
 setwd('Google Drive/Competition/KDD2015')
 rm(list = ls()); gc()
 require(methods);require(data.table);library(h2o)
-load('data_new/cv_data_log_extend.RData');options(scipen=3);source('KDD2015/Main/0_function.R')
+load('data_new/cv_data_log_extend_40F.RData');options(scipen=3);source('KDD2015/Main/0_function.R')
 
 ################
 ### training ###
@@ -9,9 +9,9 @@ load('data_new/cv_data_log_extend.RData');options(scipen=3);source('KDD2015/Main
 train_df <- train[,-which(names(train) %in% c('course_id', 'enrollment_id', 'username'))]
 val_df <- val[,-which(names(val) %in% c('course_id', 'enrollment_id', 'username'))]
 test_df <- test[,-which(names(test) %in% c('course_id', 'enrollment_id', 'username'))]
-train_df <- train_df[,-which(names(train_df) %in% var_rm)]
-val_df <- val_df[,-which(names(val_df) %in% var_rm)]
-test_df <- test_df[,-which(names(test_df) %in% var_rm)]
+# train_df <- train_df[,-which(names(train_df) %in% var_rm)]
+# val_df <- val_df[,-which(names(val_df) %in% var_rm)]
+# test_df <- test_df[,-which(names(test_df) %in% var_rm)]
 train_df[,ncol(train_df)] <- as.factor(train_df[,ncol(train_df)])
 levels(train_df[,ncol(train_df)]) <- c('No', 'Yes')
 val_df[,ncol(val_df)] <- as.factor(val_df[,ncol(val_df)])
@@ -126,10 +126,10 @@ for(i in 1:20){print(i)
                      #nbins_cats=1024,
                      balance_classes=F,
                      seed=8)
-    model@model$scoring_history
-    model@model$variable_importances
-    var_imp <- as.data.frame(model@model$variable_importances)
-    var_rm <- var_imp[which(var_imp$percentage <= 0.005), 1]
+    # model@model$scoring_history
+    # model@model$variable_importances
+    # var_imp <- as.data.frame(model@model$variable_importances)
+    # var_rm <- var_imp[which(var_imp$percentage <= 0.005), 1]
     
     pred = as.data.frame(predict(model,val.hex))
     score <- auc(pred[,2:3], target_val);print(score)
