@@ -22,10 +22,10 @@ test[,-which(names(test) %in% c("enrollment_id","username","course_id"))] <-
 save(train,test,file='data_new/raw_data_log_extend.RData')
 
 ### Center & Scale ###
-load('data_new/raw_data_log_extend.RData')
-fit <- preProcess(train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))], method = c('center', 'scale'))
-train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))] <- predict(fit,train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))])
-test[,-which(names(test) %in% c("enrollment_id","username","course_id","dropout"))] <- predict(fit,test[,-which(names(test) %in% c("enrollment_id","username","course_id","dropout"))])
+# load('data_new/raw_data_log_extend.RData')
+# fit <- preProcess(train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))], method = c('scale'))
+# train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))] <- predict(fit,train[,-which(names(train) %in% c("enrollment_id","username","course_id","dropout"))])
+# test[,-which(names(test) %in% c("enrollment_id","username","course_id","dropout"))] <- predict(fit,test[,-which(names(test) %in% c("enrollment_id","username","course_id","dropout"))])
 
 ### Feature Selection ###
 load('data_new/raw_data_log_extend.RData')
@@ -33,7 +33,8 @@ RocImp <- filterVarImp(x = train[, -which(names(train) %in% c('course_id', 'enro
 RocImp[order(RocImp[,1],decreasing = T),]
 # varImp <- row.names(RocImp[which(RocImp$Yes>0.5),])
 rmVar <- c('MorningRatio', 'NoonRatio', 'NightRatio', 'cat_combinedopenendedNum','cs_about','cs_combinedopenended',
-           'cs_dictation','cs_peergrading','cs_static_tab')
+           'cs_dictation','cs_peergrading','cs_static_tab',
+           'cs_chapter','cs_about','cs_combinedopenended','cs_dictation','cs_peergrading','cs_problem','cs_static_tab','cs_vertical')
 # table(train[,colnames(train)[51]])
 # colnames(train)[45]
 

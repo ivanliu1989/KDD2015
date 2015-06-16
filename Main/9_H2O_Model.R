@@ -6,9 +6,12 @@ load('data_new/cv_data_log_extend_40F.RData');options(scipen=3);source('KDD2015/
 ################
 ### training ###
 ################
-train_df <- train[,-which(names(train) %in% c('course_id', 'enrollment_id', 'username'))]
-val_df <- val[,-which(names(val) %in% c('course_id', 'enrollment_id', 'username'))]
-test_df <- test[,-which(names(test) %in% c('course_id', 'enrollment_id', 'username'))]
+train_df <- train[,-which(names(train) %in% c('enrollment_id', 'username'))]#'course_id'
+val_df <- val[,-which(names(val) %in% c('enrollment_id', 'username'))]
+test_df <- test[,-which(names(test) %in% c('enrollment_id', 'username'))]
+train_df$course_id <- as.factor(train_df$course_id)
+val_df$course_id <- as.factor(val_df$course_id)
+test_df$course_id <- as.factor(test_df$course_id)
 # train_df <- train_df[,-which(names(train_df) %in% var_rm)]
 # val_df <- val_df[,-which(names(val_df) %in% var_rm)]
 # test_df <- test_df[,-which(names(test_df) %in% var_rm)]
@@ -118,12 +121,12 @@ for(i in 1:20){print(i)
                      y=response,
                      training_frame = train.hex,
                      distribution="bernoulli",
-                     ntrees=600,
-                     max_depth=7,
+                     ntrees=1300,
+                     max_depth=5,
                      # min_rows=10,
                      learn_rate=0.01,
-                     nbins=186,
-                     #nbins_cats=1024,
+                     nbins=1024,
+                     nbins_cats=524,
                      balance_classes=F,
                      seed=8)
     # model@model$scoring_history
